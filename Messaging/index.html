@@ -1,0 +1,68 @@
+<html>
+<head>
+    <title>Firebase_Messaging</title>
+    <link rel="canonical" href="https://guccinan88.github.io/Firebase_Messaging/" />
+</head>
+<body>
+    <h1>測試接收Firebase Messaging</h1>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDz8sD8-Xnx4ARPqN9J6-lJdObXRJZ37jc",
+            authDomain: "fir-cookbook-97c26.firebaseapp.com",
+            databaseURL: "https://fir-cookbook-97c26-default-rtdb.firebaseio.com",
+            projectId: "fir-cookbook-97c26",
+            storageBucket: "fir-cookbook-97c26.appspot.com",
+            messagingSenderId: "778291213397",
+            appId: "1:778291213397:web:479746fd318e51a06610dc",
+            measurementId: "G-Z6GJFZ5C9C"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const messaging = firebase.messaging();
+        //使用者是否同意授予通知權限，若同意瀏覽器會返回granted
+        Notification.requestPermission().then((permission) => {
+            if ((permission === 'granted')) {
+                console.log('同意授予通知權限!');
+
+                /*需要註冊firebase-messaging-sw.js(至少需要一個空白檔案)
+                如果FCM要背景執行firebase-messaging-sw.js內容要包含Firebase上的Config資訊
+                Service Worker是PWA的核心，可以讓WEB有如APP一樣可以擁有訊息推播功能
+                */
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker
+                        .register('/Firebase_Messaging/firebase-messaging-sw.js', {scope: '/Firebase_Messaging/'}) // 註冊 Service Worker
+                        .then(function (reg) {
+                            console.log('sw註冊成功', reg);
+                        })
+                        .catch(function (err) {
+                            console.log('sw註冊失敗', err);
+                        });
+                }
+                //取得Token給伺服器傳送訊息的對象，每台裝置都有不一樣的Token，vapidKey則是FCM的公鑰
+                messaging.getToken({ vapidKey: 'BBbgwV2hXC_TomSFFnxz-cmAwaxw-Xqsc7Cztx7Dj2s0AbUlZC3sN3YKDchsIZwSRKEk0MqDIcsYeZvVj1U0hWk' })
+                    .then((currentToken) => {
+                        if (currentToken) {
+                            console.log(currentToken);
+                        } else {
+                            console.log('未註冊Token需要啟用FCM');
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                    });
+                //視窗開啟時候接收訊息的方式，輸出在控制台
+                messaging.onMessage((payload) => {
+                    console.log('FCM Message:', payload);
+                });
+            } else {
+                console.log('拒絕授予通知權限!');
+            }
+        }).catch((err) => {
+            console.log('權限授予發生錯誤!', err);
+        });
+    </script>
+</body>
+
+</html>
