@@ -1,0 +1,2 @@
+Firebase Admin擁有各種權限可以操作Firebase主控台
+除了操作使用者帳號之外還可以操作Database，非常適合管理者用來管理Firebase
