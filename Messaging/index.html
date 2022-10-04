@@ -1,7 +1,6 @@
 <html>
 <head>
     <title>Firebase_Messaging</title>
-    <link rel="canonical" href="https://guccinan88.github.io/Firebase_Messaging/" />
 </head>
 <body>
     <h1>測試接收Firebase Messaging</h1>
@@ -33,7 +32,7 @@
                 */
                 if ('serviceWorker' in navigator) {
                     navigator.serviceWorker
-                        .register('/Firebase_Messaging/firebase-messaging-sw.js', {scope: '/Firebase_Messaging/'}) // 註冊 Service Worker
+                        .register('./firebase-messaging-sw.js') // 註冊 Service Worker
                         .then(function (reg) {
                             console.log('sw註冊成功', reg);
                         })

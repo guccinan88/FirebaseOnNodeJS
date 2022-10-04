@@ -2,10 +2,11 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 var admin = require("firebase-admin");
-var serviceAccount = require("./serviceAccountKey.json");
+var serviceAccount = require("./serviceAccountKey.json");//引入firebase主控台下載的admin sdk
 
+//初始化admin sdk
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert(serviceAccount),//驗證從firebase主控台下載的admin sdk
     databaseURL: "https://fir-cookbook-97c26-default-rtdb.firebaseio.com"
 });
 //建立使用者，建立成功會出現使用者資訊
@@ -62,7 +63,7 @@ function deleteUser(email) {
 function deleteUsers() {
     //let usersArr = ['e1@gmail.com', 'e2@gmail.com'];也可使用陣列儲存要刪除的email
     let setUsers = new Set();//使用Set的好處是內容的元素有不能重複的特性，可以避免相同uid重複操作的錯誤!
-    
+
     setUsers.add('e1@gmail.com');
     setUsers.add('e2@gmail.com');
     setUsers.forEach((user) => {
@@ -74,6 +75,23 @@ function deleteUsers() {
         });
     });
 }
-deleteUsers();
 
+//發送FCM訊息給註冊的單一設備
+const DEVICE_TOKEN='cx2U4ajlH-ksErrGVp4PmA:APA91bGA9C_OdCUWT9D3SujTPO91Aliry0gT4m-zlxapDVR-BTUFRAH0s2bZH1Hx2lGHCDnV1YHB0YK3xcqWJvn01Eg6WlZuuzs-UTAdjB8TiH0m3XHj-R0Xr2ruttN5ncIKkuCeNPpb';
+function sendMessaging(reg_token,title,body) {
+    const msg = {
+        data: {
+            title:title,
+            body: body,
+            time:(new Date()).toString() //傳送的資料只接受string格式
+        },
+        token: reg_token
+    }
+    admin.messaging().send(msg).then((res) => {
+        console.log('發送成功:', res);
+    }).catch((err) => {
+        console.log('發送失敗:', err);
+    });
+}
+sendMessaging(DEVICE_TOKEN,'測試標題!','測試FCM!');
 
